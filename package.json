@@ -15,7 +15,7 @@
     "cloudinary-react": "^1.0.6",
     "disqus-react": "^1.0.5",
     "eslint-plugin-react": "^7.5.1",
-    "node-sass": "^4.7.2",
+    "node-sass": "^7.0.0",
     "react": "^16.8.6",
     "react-background-image-loader": "^0.0.5",
     "react-dom": "^16.8.6",
