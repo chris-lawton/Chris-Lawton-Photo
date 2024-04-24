@@ -1,61 +1,79 @@
-const path = require('path');
-const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const autoprefixer = require('autoprefixer');
+const path = require("path");
+const webpack = require("webpack");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const sass = require("sass");
 
 module.exports = {
-  context: path.resolve(__dirname, './src'),
-  entry: {
-    app: ['./js/app.js'],
-    styles: './css/style.scss',
-  },
+    context: path.resolve(__dirname, "./src"),
+    entry: {
+        app: ["./js/app.js"],
+        styles: "./css/style.scss",
+    },
 
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: '[name].bundle.js',
-    publicPath: '/dist/',
-  },
+    output: {
+        path: path.resolve(__dirname, "dist"),
+        filename: "[name].bundle.js",
+        publicPath: "/dist/",
+    },
 
-  devServer: {
-    historyApiFallback: true,
-    contentBase: path.resolve(__dirname, './'),
-  },
+    devServer: {
+        historyApiFallback: true,
+        static: path.resolve(__dirname, "./"),
+    },
 
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: [/node_modules/],
-        use: [{
-          loader: 'babel-loader',
-          options: { presets: ['react', 'env'] },
-        }],
-      },
-      {
-        test: /\.scss$/,
-        use: ExtractTextPlugin.extract({
-          use: [{
-            loader: 'css-loader',
-            options: {
-              url: false,
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: [/node_modules/],
+                use: [
+                    {
+                        loader: "babel-loader",
+                        options: {
+                            presets: [
+                                "@babel/preset-react",
+                                "@babel/preset-env",
+                            ],
+                        },
+                    },
+                ],
             },
-          },
-          {
-            loader: 'postcss-loader',
-            options: {
-              plugins: [autoprefixer('last 2 versions')],
+            {
+                test: /\.(scss|css)$/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: "css-loader",
+                        options: {
+                            sourceMap: true,
+                        },
+                    },
+                    {
+                        loader: "postcss-loader",
+                        options: {
+                            sourceMap: true,
+                            postcssOptions: {
+                                plugins: ["autoprefixer"],
+                            },
+                        },
+                    },
+                    {
+                        loader: "sass-loader",
+                        options: {
+                            sourceMap: true,
+                            implementation: sass,
+                            sassOptions: {
+                                outputStyle: "compressed",
+                            },
+                        },
+                    },
+                ],
             },
-          },
-          {
-            loader: 'sass-loader',
-          }],
-        }),
-      },
+        ],
+    },
+
+    plugins: [
+        new MiniCssExtractPlugin({ filename: "[name].min.css" }),
+        new webpack.EnvironmentPlugin(["NODE_ENV"]),
     ],
-  },
-
-  plugins: [
-    new ExtractTextPlugin('[name].min.css'),
-    new webpack.EnvironmentPlugin(['NODE_ENV']),
-  ],
 };
